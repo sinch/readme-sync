@@ -1,0 +1,45 @@
+{
+  "name": "readmejs",
+  "version": "0.0.1",
+  "description": "Publish your Readme.io documentation from a local repository of Markdown content files",
+  "main": "bin/readme.js",
+  "bin": {
+    "readme.js": "bin/readme.js"
+  },
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinch/readmejs.git"
+  },
+  "keywords": [
+    "readme.io",
+    "sync",
+    "markdown"
+  ],
+  "author": "Sinch AB",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sinch/readmejs/issues"
+  },
+  "homepage": "https://github.com/sinch/readmejs#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
+    "dotenv": "^8.0.0",
+    "glob": "^7.1.4",
+    "gray-matter": "^4.0.2",
+    "js-yaml": "^3.13.1",
+    "marked": "^0.7.0",
+    "mustache": "^3.1.0",
+    "readline-sync": "^1.4.10",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "slugify": "^1.3.4",
+    "staged-git-files": "^1.2.0"
+  }
+}
