@@ -1,33 +1,29 @@
-[![CircleCI](https://circleci.com/gh/sinch/docs.svg?style=svg&circle-token=acb4c7610022a9c27e9e356ffcc2b6d96dba1b2b)](https://circleci.com/gh/sinch/docs)
+# Readme.js - Publish local Markdown content files to Readme.io
 
-# Public documentation sources for Sinch
-
-This repository holds the sources for the documentation hosted on [readme.io](http://sinch.readme.io).
+Readme.js is a CLI application that enables a Readme.io editing workflow completely out of a repository of Markdown content files. 
 
 ## Content files
 
-All contents are stored in `.md` files under the `docs` directory. Each subdirectory represents a category slug, and
+All content is expected to be stored in Markdown (`.md`) files under the `docs` directory. Each subdirectory represents a category slug, and
 subsequent subdirectories mimic the page hierarchy in Readme.
 
-## `readme.js` CLI
+> Note: Although the tool will handle creating content pages, it cannot currently create content categories on your Readme.io documentation site. These must be created by hand via the Readme admin UI.
 
-### Preparation
+## Using the `readme.js` CLI in your project
 
-If NVM (Node Version Manager) is not installed, [install it](https://github.com/nvm-sh/nvm#installation-and-update).
+### Installation
 
-Then, make sure the right Node version is installed and in use:
+To install the CLI in your project, run:
 
-    $ nvm install              
-    $ nvm use
-
-Finally, install project dependencies:
+    $ npm install readmejs --save-dev
     
-    $ npm install
+You can also install the CLI globally:
+
+    $ npm install -g readmejs
     
 ### API key
 
-You will need the API key for your Readme account to proceed with using the CLI. It can be obtained via the Readme admin 
-user interface.
+You will need the API key for your Readme account before using the CLI. It can be obtained via the Readme admin UI.
 
 ### Configuration
 
@@ -49,12 +45,14 @@ See the general help (`./readme.js -h`) for details of each configuration option
 
 ### `config.yml` configuration file
 
-In addition to the global configurations above, the file `config.yml` contains general configuration for the CLI that are not expected to change between commands. 
-The following fields are available:
+In addition to the global configurations listed above, you can provide more general configurations that are not expected to change between command runs in a YAML file. 
+By default, this file is expected to be named `config.yml` and be located in the current working directory. The name of the file can be configured using the `--config` CLI option.
+
+The following fields can be provided in the YAML configuration file:
 
 | Field        | Description                                                                                                                                                                                                            |
 | ---          | ---                                                                                                                                                                                                                    |
-| `categories` | List of category slugs that exist on Readme documentation site. These slugs have been implied from the label of each category. This list is used by the CLI to list all categories when no specific slug is specified. |
+| `categories` | List of category slugs that exist on Readme documentation site. These slugs are implied from the label of each category. This list is used by the CLI to list all categories when no specific slug is specified. |
 | `filters`    | Content filters to enable. Description of what filters are and which one is available is [below](#content-filters). Each filter can have specific configuration options that should be specified as child attributes under the filter's name in the YAML configuration.                                                                                                                       |
 
 ### Content Filters
@@ -198,4 +196,23 @@ Run all validations on all content files:
 Validate only cross references for a single file:
  
     $ ./readme.js markdownize --file sms/sms.md --validators xrefs
+    
+    
+## Contributing / Local development
+
+If NVM (Node Version Manager) is not installed, [install it](https://github.com/nvm-sh/nvm#installation-and-update).
+
+Then, make sure the right Node version is installed and in use:
+
+    $ nvm install              
+    $ nvm use
+
+Finally, install project dependencies:
+    
+    $ npm install
  
+To run tests, run 
+
+    $ npm test
+    
+You should now be able to work on the project locally!
