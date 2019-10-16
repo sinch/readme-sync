@@ -1,20 +1,20 @@
 {
-  "name": "readmejs",
+  "name": "readme-sync",
   "version": "0.0.1",
-  "description": "Publish your Readme.io documentation from a local repository of Markdown content files",
+  "description": "Sync local Markdown content files with Readme.io",
   "main": "bin/readme.js",
   "bin": {
-    "readme.js": "bin/readme.js"
+    "readme-sync": "bin/readme.js"
   },
   "directories": {
-    "lib": "src"
+    "src": "src"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sinch/readmejs.git"
+    "url": "https://github.com/sinch/readme-sync.git"
   },
   "keywords": [
     "readme.io",
@@ -24,9 +24,9 @@
   "author": "Sinch AB",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sinch/readmejs/issues"
+    "url": "https://github.com/sinch/readme-sync/issues"
   },
-  "homepage": "https://github.com/sinch/readmejs#readme",
+  "homepage": "https://github.com/sinch/readme-sync#readme",
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^2.20.0",

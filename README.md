@@ -1,25 +1,27 @@
-# Readme.js - Publish local Markdown content files to Readme.io
+# Publish local Markdown content files to Readme.io
 
-Readme.js is a CLI application that enables a Readme.io editing workflow completely out of a repository of Markdown content files. 
+This is a CLI application that enables a Readme.io editing workflow based entirely out of a repository of Markdown 
+content files. 
 
 ## Content files
 
-All content is expected to be stored in Markdown (`.md`) files under the `docs` directory. Each subdirectory represents a category slug, and
-subsequent subdirectories mimic the page hierarchy in Readme.
+All content is expected to be stored in Markdown (`.md`) files under the `docs` directory (the actual directory name can 
+be configured). Each subdirectory within the main directory represents a category slug, and subsequent subdirectories 
+mimic the page hierarchy in Readme.
 
 > Note: Although the tool will handle creating content pages, it cannot currently create content categories on your Readme.io documentation site. These must be created by hand via the Readme admin UI.
 
-## Using the `readme.js` CLI in your project
+## Using the `readme-sync` CLI in your project
 
 ### Installation
 
 To install the CLI in your project, run:
 
-    $ npm install readmejs --save-dev
+    $ npm install readme-sync --save-dev
     
 You can also install the CLI globally:
 
-    $ npm install -g readmejs
+    $ npm install -g readme-sync
     
 ### API key
 
@@ -41,7 +43,7 @@ The following configurations are available:
 | `--apikey`      | `APIKEY`             |
 | `--docsversion` | `DOCSVERSION`        |
 
-See the general help (`./readme.js -h`) for details of each configuration option.
+See the general help (`./readme-sync -h`) for details of each configuration option.
 
 ### `config.yml` configuration file
 
@@ -126,7 +128,7 @@ The following footer would be rendered on each content page:
 
 You can get help for the CLI or for any command by running it with `-h` argument:
 
-    $ ./readme.js [command] -h 
+    $ ./readme-sync [command] -h 
 
 ### Commands
 
@@ -139,15 +141,15 @@ contents directory matches the slug of the page in Readme.
 
 Push contents for all categories defined in `config.yml`:
 
-    $ ./readme.js push
+    $ ./readme-sync push
     
 Push contents for a specific category:
 
-    $ ./readme.js push sms
+    $ ./readme-sync push sms
     
 Simulate (dry run) a push of only locally Git-staged files:  
 
-    $ ./readme.js push sms --staged-only --dry-run   
+    $ ./readme-sync push sms --staged-only --dry-run   
     
 #### `fetch`
 
@@ -159,11 +161,11 @@ that mimic the category/page hierarchy stored in Readme.
 
 Fetch contents of all categories defined in `config.yml`:
 
-    $ ./readme.js fetch
+    $ ./readme-sync fetch
     
 Fetch contents for a specific category:
 
-    $ ./readme.js fetch sms
+    $ ./readme-sync fetch sms
 
 #### `markdownize`
 
@@ -173,15 +175,15 @@ Converts Readme-specific widget blocks to standard Markdown.
 
 Replace all Readme widgets with their Markdown equivalent, in each and every page:
  
-    $ ./readme.js markdownize 
+    $ ./readme-sync markdownize 
 
 Only show what changes would be performed without actually persisting them:
  
-    $ ./readme.js markdownize --dry-run
+    $ ./readme-sync markdownize --dry-run
     
 Only convert Code and Image widgets from a specific content file:
  
-    $ ./readme.js markdownize --file sms/sms.md --widgets code,image
+    $ ./readme-sync markdownize --file sms/sms.md --widgets code,image
     
 #### `validate`
 
@@ -191,11 +193,11 @@ Runs a few sanity checks on content files, such as checking for broken links (bo
  
 Run all validations on all content files:
  
-    $ ./readme.js validate  
+    $ ./readme-sync validate  
     
 Validate only cross references for a single file:
  
-    $ ./readme.js markdownize --file sms/sms.md --validators xrefs
+    $ ./readme-sync markdownize --file sms/sms.md --validators xrefs
     
     
 ## Contributing / Local development
