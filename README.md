@@ -29,15 +29,13 @@ actual Markdown content, additional metadata about each page is specified in [YA
 
 Example:
 
-```yaml
----
-title: "Welcome"
-excerpt: "This is the entry point of our documentation"
----
-# This is the page header
-
-And some content underneath.
-```
+    ---
+    title: "Welcome"
+    excerpt: "This is the entry point of our documentation"
+    ---
+    # This is the page header
+    
+    And some content underneath.
 
 The following YAML attributes are supported:
 
