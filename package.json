@@ -6,9 +6,10 @@
   "bin": {
     "readme-sync": "bin/readme.js"
   },
-  "directories": {
-    "src": "src"
-  },
+  "files": [
+    "src/",
+    "bin/"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
   },
