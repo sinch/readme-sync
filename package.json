@@ -1,6 +1,6 @@
 {
-  "name": "readme-sync",
-  "version": "0.0.1",
+  "name": "@sinch/readme-sync",
+  "version": "1.0.0",
   "description": "Sync local Markdown content files with Readme.io",
   "main": "bin/readme.js",
   "bin": {
