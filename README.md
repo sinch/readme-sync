@@ -1,15 +1,51 @@
-# Publish local Markdown content files to Readme.io
+# Publish local Markdown content files to ReadMe
 
-This is a CLI application that enables a Readme.io editing workflow based entirely out of a repository of Markdown 
-content files. 
+This is a CLI application that allows to completely offload the editing workflow of a [ReadMe](https://readme.com/) (previously known as "ReadMe.io") editing
+published documentation site to a local repository of Markdown content files.
 
-## Content files
+Main features:
+ - Fetch an existing documentation site from ReadMe using the API as a catalog of local Markdown content files
+ - Push a catalog of Markdown content files to ReadMe using the API
+ - Optionally clean up stale ReadMe pages (pages which do not have a corresponding Markdown content file) on push
+ - Perform sanity checks on the local Markdown catalog, such as finding broken links
+ - Convert ReadMe-proprietary widgets (such as images, tables, callouts, etc.) to a more generic Markdown equivalent
+ - Host locally specified static files (images and other documentation related files) on GitHub pages and refer to them on the ReadMe pages (see the `hostedFiles` filter described below)
+ - Add custom dynamic footer to pages. Footers are specified as [Mustache](http://mustache.github.io/) templates.
 
-All content is expected to be stored in Markdown (`.md`) files under the `docs` directory (the actual directory name can 
+## Markdown content files
+
+### Directory structure
+
+All content is expected to be stored in your project as Markdown (`.md`) files under the `docs` directory (the actual directory name can 
 be configured). Each subdirectory within the main directory represents a category slug, and subsequent subdirectories 
-mimic the page hierarchy in Readme.
+mimic the page hierarchy in ReadMe.
 
-> Note: Although the tool will handle creating content pages, it cannot currently create content categories on your Readme.io documentation site. These must be created by hand via the Readme admin UI.
+> Note: Although the tool will handle creating content pages, it cannot currently create content categories on your ReadMe documentation site. These must be created by hand via the ReadMe admin UI.
+
+### File format
+
+The local Markdown content files act as the database of pages and their contents. To support "storing" more than the
+actual Markdown content, additional metadata about each page is specified in [YAML front matter](https://jekyllrb.com/docs/front-matter/).
+
+Example:
+
+```yaml
+---
+title: "Welcome"
+excerpt: "This is the entry point of our documentation"
+---
+# This is the page header
+
+And some content underneath.
+```
+
+The following YAML attributes are supported:
+
+| Attribute | Description                                                                                        |
+| ---       | ---                                                                                                |
+| `title`   | The page title.                                                                                    |
+| `excerpt` | The small summary that appears under the page title in ReadMe.                                     |
+| `hidden`  | (Optional) If set to `true`, then the page will be hidden / un-published in the ReadMe navigation. |
 
 ## Using the `readme-sync` CLI in your project
 
@@ -25,7 +61,7 @@ You can also install the CLI globally:
     
 ### API key
 
-You will need the API key for your Readme account before using the CLI. It can be obtained via the Readme admin UI.
+You will need the API key for your ReadMe account before using the CLI. It can be obtained via the ReadMe admin UI.
 
 ### Configuration
 
@@ -52,18 +88,18 @@ By default, this file is expected to be named `config.yml` and be located in the
 
 The following fields can be provided in the YAML configuration file:
 
-| Field        | Description                                                                                                                                                                                                            |
-| ---          | ---                                                                                                                                                                                                                    |
-| `categories` | List of category slugs that exist on Readme documentation site. These slugs are implied from the label of each category. This list is used by the CLI to list all categories when no specific slug is specified. |
-| `filters`    | Content filters to enable. Description of what filters are and which one is available is [below](#content-filters). Each filter can have specific configuration options that should be specified as child attributes under the filter's name in the YAML configuration.                                                                                                                       |
+| Field        | Description                                                                                                                                                                                                                                                             |
+| ---          | ---                                                                                                                                                                                                                                                                     |
+| `categories` | List of category slugs that exist on ReadMe documentation site. These slugs are implied from the label of each category. This list is used by the CLI to list all categories when no specific slug is specified.                                                        |
+| `filters`    | Content filters to enable. Description of what filters are and which one is available is [below](#content-filters). Each filter can have specific configuration options that should be specified as child attributes under the filter's name in the YAML configuration. |
 
 ### Content Filters
 
-Content filters are transformations that can be applied to content pages before they are pushed to Readme. To ensure local
-content stays unchanged when that content gets fetched back from Readme, all filters must be able to rollback their 
+Content filters are transformations that can be applied to content pages before they are pushed to ReadMe. To ensure local
+content stays unchanged when that content gets fetched back from ReadMe, all filters must be able to rollback their 
 changes.
 
-#### `hostedFiles`
+#### `hostedFiles` filter
 
 This filter is to be used when content files are hosted on a publicly-accessible Web server. 
 All paths specified as relative paths will be converted to an equivalent public URL based on the filter's `baseUrl` configuration value. 
@@ -84,7 +120,7 @@ filters:
       baseUrl: https://GITHUB_USERNAME.github.io/REPO/
 ```
 
-#### `footer`
+#### `footer` filter
 
 Renders a Mustache template as the footer of all content files.
 
@@ -134,8 +170,8 @@ You can get help for the CLI or for any command by running it with `-h` argument
 
 #### `push`
 
-Pushes local Markdown content files to Readme via their public API. It is assumed that each `.md` file in the 
-contents directory matches the slug of the page in Readme. 
+Pushes local Markdown content files to ReadMe via their public API. It is assumed that each `.md` file in the 
+contents directory matches the slug of the page in ReadMe. 
 
 **Usage examples**
 
@@ -153,9 +189,9 @@ Simulate (dry run) a push of only locally Git-staged files:
     
 #### `fetch`
 
-Fetches up-to-date contents from Readme via their public API in a local folder. 
-This command will create or update local `.md` files that represent the current content in Readme, organized in directories 
-that mimic the category/page hierarchy stored in Readme.  
+Fetches up-to-date contents from ReadMe via their public API in a local folder. 
+This command will create or update local `.md` files that represent the current content in ReadMe, organized in directories 
+that mimic the category/page hierarchy stored in ReadMe.  
 
 **Usage examples**
 
@@ -169,11 +205,11 @@ Fetch contents for a specific category:
 
 #### `markdownize`
 
-Converts Readme-specific widget blocks to standard Markdown.
+Converts ReadMe-specific widget blocks to standard Markdown.
 
 **Usage examples**
 
-Replace all Readme widgets with their Markdown equivalent, in each and every page:
+Replace all ReadMe widgets with their Markdown equivalent, in each and every page:
  
     $ ./readme-sync markdownize 
 
