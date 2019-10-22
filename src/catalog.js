@@ -164,6 +164,7 @@ class Page {
             this.title,
             this.excerpt,
             this.hidden,
+            this.headers.next,
             content
         ].join('\n');
     }
@@ -175,6 +176,15 @@ class Page {
         };
         if (this.hidden) {
             frontMatter['hidden'] = 'true';
+        }
+        if (this.headers.next) {
+            const next = frontMatter['next'] = {};
+            if (this.headers.next.pages.length > 0) {
+                next['pages'] = this.headers.next.pages;
+            }
+            if (this.headers.next.description) {
+                next['description'] = this.headers.next.description;
+            }
         }
 
         return `---\n${yaml.safeDump(frontMatter)}---\n${this.content}`;

@@ -173,7 +173,16 @@ class Api {
             title: json.title,
             excerpt: json.excerpt,
             hidden: json.hidden,
+            next: undefined,
         };
+
+        if (json.next.pages.length > 0) {
+            headers.next = {
+                pages: json.next.pages.map(page => page.slug),
+                description: json.next.description
+            };
+        }
+
         return new Page(category, parent ? parent.slug : null, json.slug, json.body, headers);
     }
 }
