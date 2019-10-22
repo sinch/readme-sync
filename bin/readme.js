@@ -201,6 +201,7 @@ The following validators are available:
  - 'mailtos':      Verifies that mailto: links (links to email addresses) are correctly formed.
  - 'headings':     Verifies that section headings are at minimum 2 levels deep
  - 'images':       Verifies that images (either specified with a relative path or with a remote URL) do exist.
+ - 'whatsnext':    Verifies that pages references listed in 'next' front matter point to known content pages.
 
 All validations are performed unless --validations is specified.
     `)
