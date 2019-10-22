@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const frontMatter = require('gray-matter');
 const marked = require('marked');
 const slugify = require('slugify');
+const yaml = require('js-yaml');
 
 class Catalog {
     constructor(pages) {
@@ -168,22 +169,15 @@ class Page {
     }
 
     get sources() {
-        const frontmatterEntries = [
-            ['title', this.title],
-            ['excerpt', this.excerpt],
-        ];
+        const frontMatter = {
+            title: this.title,
+            excerpt: this.excerpt
+        };
         if (this.hidden) {
-            frontmatterEntries.push(
-                ['hidden', 'true']
-            )
+            frontMatter['hidden'] = 'true';
         }
 
-        const frontMatter = frontmatterEntries.map(([key, value]) => `${key}: "${value}"`).join('\n');
-
-        return `---
-${frontMatter}
----
-${this.content}`;
+        return `---\n${yaml.safeDump(frontMatter)}---\n${this.content}`;
     }
 
     async writeTo(baseDir) {
