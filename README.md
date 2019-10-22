@@ -27,11 +27,17 @@ mimic the page hierarchy in ReadMe.
 The local Markdown content files act as the database of pages and their contents. To support "storing" more than the
 actual Markdown content, additional metadata about each page is specified in [YAML front matter](https://jekyllrb.com/docs/front-matter/).
 
-Example:
+Full example:
 
     ---
-    title: "Welcome"
-    excerpt: "This is the entry point of our documentation"
+    title: Welcome
+    excerpt: This is the entry point of our documentation
+    hidden: 'true'
+    next:
+      pages: 
+        - other-page-slug1
+        - other-page-slug2
+      description: Text to be shown in the What's Next box
     ---
     # This is the page header
     
@@ -39,11 +45,14 @@ Example:
 
 The following YAML attributes are supported:
 
-| Attribute | Description                                                                                        |
-| ---       | ---                                                                                                |
-| `title`   | The page title.                                                                                    |
-| `excerpt` | The small summary that appears under the page title in ReadMe.                                     |
-| `hidden`  | (Optional) If set to `true`, then the page will be hidden / un-published in the ReadMe navigation. |
+| Attribute          | Description                                                                                        |
+| ---                | ---                                                                                                |
+| `title`            | The page title.                                                                                    |
+| `excerpt`          | The small summary that appears under the page title in ReadMe.                                     |
+| `hidden`           | (Optional) If set to `true`, then the page will be hidden / un-published in the ReadMe navigation. |
+| `next`             | (Optional) Allows control on the *What's Next* entries displayed by ReadMe.                        |
+| `next.pages`       | (Optional) List of page slugs that should be referenced in the *What's Next* section.              |
+| `next.description` | (Optional) Text to be displayed as introduction in the *What's Next* section.                      |
 
 ## Using the `readme-sync` CLI in your project
 
