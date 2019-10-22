@@ -116,15 +116,15 @@ program
             prune: cmd.prune,
         };
 
-        let catalog = Catalog.build(cmd.dir);
+        const fullCatalog = Catalog.build(cmd.dir);
+        const readme = apiClient(fullCatalog, options);
 
-        catalog = await selectPages(catalog, options);
+        const catalog = await selectPages(fullCatalog, options);
         if (catalog.length === 0) {
             console.warn('No files to found to push.');
             return;
         }
 
-        const readme = apiClient(catalog, options);
         for (let page of catalog.pages) {
             for (const filter of createFilters(options.config)) {
                 page = await filter.apply(page);
