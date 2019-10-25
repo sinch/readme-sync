@@ -150,7 +150,6 @@ class Page {
 
     /**
      * Actual data that is used to compute content hash identity
-     * Because the page ID changes between Readme versions, we're leaving it out from the hash computation
      */
     get hashData() {
         // readme.io always strips the last newline from content, so do the same here to prevent unnecessary content
@@ -160,12 +159,13 @@ class Page {
             content = content.substr(0, this.content.length - 1);
         }
 
-        return [
-            this.title,
-            this.excerpt,
-            this.hidden,
-            content
-        ].join('\n');
+        return JSON.stringify({
+            title: this.title,
+            excerpt: this.excerpt,
+            hidden: this.hidden,
+            next: this.headers.next,
+            content: content
+        });
     }
 
     get sources() {
@@ -175,6 +175,15 @@ class Page {
         };
         if (this.hidden) {
             frontMatter['hidden'] = 'true';
+        }
+        if (this.headers.next) {
+            const next = frontMatter['next'] = {};
+            if (this.headers.next.pages) {
+                next['pages'] = this.headers.next.pages;
+            }
+            if (this.headers.next.description) {
+                next['description'] = this.headers.next.description;
+            }
         }
 
         return `---\n${yaml.safeDump(frontMatter)}---\n${this.content}`;

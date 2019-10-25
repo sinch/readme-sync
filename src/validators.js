@@ -157,6 +157,26 @@ class HeadingsValidator extends Validator {
     }
 }
 
+class WhatsNextValidator extends Validator {
+
+    async validate(catalog, page, options, errorCallback) {
+        const next = page.headers.next;
+        if (next && next.pages) {
+            for (const slug of next.pages) {
+                if (catalog.find(Page.bySlug(slug)) === undefined) {
+                    const element = {
+                        ref: page.ref,
+                        desc: slug
+                    };
+                    errorCallback(element,
+                        'Invalid page reference in `next.pages` front matter entry. ' +
+                        'A page with this slug could not be found in local catalog.');
+                }
+            }
+        }
+    }
+}
+
 
 module.exports = {
     xrefs: new XrefLinkValidator(),
@@ -164,5 +184,6 @@ module.exports = {
     mailtos: new MailtoLinkValidator(),
     images: new HrefValidator(link => link instanceof Image),
     headings: new HeadingsValidator(),
+    whatsnext: new WhatsNextValidator(),
 };
 

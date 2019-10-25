@@ -116,15 +116,15 @@ program
             prune: cmd.prune,
         };
 
-        let catalog = Catalog.build(cmd.dir);
+        const fullCatalog = Catalog.build(cmd.dir);
+        const readme = apiClient(fullCatalog, options);
 
-        catalog = await selectPages(catalog, options);
+        const catalog = await selectPages(fullCatalog, options);
         if (catalog.length === 0) {
             console.warn('No files to found to push.');
             return;
         }
 
-        const readme = apiClient(catalog, options);
         for (let page of catalog.pages) {
             for (const filter of createFilters(options.config)) {
                 page = await filter.apply(page);
@@ -201,6 +201,7 @@ The following validators are available:
  - 'mailtos':      Verifies that mailto: links (links to email addresses) are correctly formed.
  - 'headings':     Verifies that section headings are at minimum 2 levels deep
  - 'images':       Verifies that images (either specified with a relative path or with a remote URL) do exist.
+ - 'whatsnext':    Verifies that pages references listed in 'next' front matter point to known content pages.
 
 All validations are performed unless --validations is specified.
     `)

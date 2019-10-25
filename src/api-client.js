@@ -109,8 +109,7 @@ class Api {
                 .put(`${API_ROOT}/docs/${localPage.slug}`, {
                     ...this.httpOptions,
                     json: Object.assign(pageJson, {
-                        ...localPage.headers,
-                        body: localPage.content,
+                        ...this.pageToJson(localPage),
                         lastUpdatedHash: localPage.hash,
                     }),
                 });
@@ -128,13 +127,11 @@ class Api {
         }
 
         let postJson = {
-            ...localPage.headers,
+            ...this.pageToJson(localPage),
             category: category._id,
             parentDoc: parentPage ? parentPage._id : null,
             slug: localPage.slug,
-            body: localPage.content,
             lastUpdatedHash: localPage.hash,
-            hidden: false,
         };
 
         if (this.options.dryRun) {
@@ -173,8 +170,54 @@ class Api {
             title: json.title,
             excerpt: json.excerpt,
             hidden: json.hidden,
+            next: undefined,
         };
+
+        if (json.next.pages.length > 0) {
+            headers.next = {
+                pages: json.next.pages.map(page => page.slug),
+                description: json.next.description
+            };
+        }
+
         return new Page(category, parent ? parent.slug : null, json.slug, json.body, headers);
+    }
+
+    /**
+     * Converts a `Page` object instance to JSON that ReadMe accepts as inputs for page modifications.
+     * @param page The local page to represent for the ReadMe API.
+     */
+    pageToJson(page) {
+        const json = {
+            title: page.title,
+            excerpt: page.excerpt,
+            hidden: page.hidden,
+            body: page.content,
+            next: {
+                pages: [],
+                description: ''
+            }
+        };
+
+        if (page.headers.next) {
+            json.next = Object.assign(json.next, page.headers.next);
+            if (json.next.pages) {
+                // resolve each referenced page in local catalog and derive data
+                json.next.pages = json.next.pages
+                    .map(slug => this.catalog.find(Page.bySlug(slug)))
+                    .filter(page => page !== undefined)
+                    .map(resolvedPage => {
+                        return {
+                            slug: resolvedPage.slug,
+                            name: resolvedPage.title,
+                            icon: 'file-text-o',
+                            type: 'doc'
+                        }
+                    })
+            }
+        }
+
+        return json;
     }
 }
 
