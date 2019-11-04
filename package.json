@@ -28,6 +28,7 @@
     "url": "https://github.com/sinch/readme-sync/issues"
   },
   "homepage": "https://github.com/sinch/readme-sync#readme",
+  "preferGlobal": true,
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
