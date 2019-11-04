@@ -22,13 +22,13 @@ const CONFIG_APIKEY = 'apikey';
 const CONFIG_DOCSVERSION = 'docsversion';
 
 program.description(
-    `Tools to sync content back and forth between this local Git repository and the remote readme.io API.
+    `Tools to sync content back and forth between this local Git repository and the remote ReadMe API.
 Global arguments \`apikey\` and \`docsversion\` must always be provided for each command, before the command name.
 `);
 
 program.option(
     `-k, --${CONFIG_APIKEY} <${CONFIG_APIKEY}>`,
-    `API key for readme.io (required)`,
+    `API key for ReadMe (required)`,
         key => process.env.APIKEY = key);
 program.option(`-v, --${CONFIG_DOCSVERSION} <${CONFIG_DOCSVERSION}>`,
     `Documentation version to act upon (required)`,
@@ -40,7 +40,7 @@ program.option(`-c, --config [config]`,
 program
     .command('fetch [category_slugs]')
     .description(`
-Fetches up-to-date Markdown content files from readme.io, overwriting local files.
+Fetches up-to-date Markdown content files from ReadMe, overwriting local files.
 When called with a comma-delimited list of category slugs, only pages from those categories will be fetched.
 
 After crawling remote pages, the contents of the local catalog will be analyzed to find stale pages (pages present
@@ -98,7 +98,7 @@ locally but not present on Readme). If any are found, the program will offer to 
 
 program
     .command('push [category_slugs]', )
-    .description('Pushes local Markdown content files to readme.io. ' +
+    .description('Pushes local Markdown content files to ReadMe. ' +
         'When called with a comma-delimited list of category slugs, only those categories will be pushed.')
     .option('-d, --dir <dir>', `Directory where the Markdown content files will be loaded from.`, DEFAULT_DOCS_DIR)
     .option('-f, --file <file>', `Path to a single file to process, relative to the directory specified with -d/--dir option.`)
