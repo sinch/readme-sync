@@ -1,7 +1,8 @@
 # Publish local Markdown content files to ReadMe
 
-This is a CLI application that allows to completely offload the editing workflow of a [ReadMe](https://readme.com/) (previously known as "ReadMe.io") editing
-published documentation site to a local repository of Markdown content files.
+This is a CLI application that allows to offload the editing workflow of a 
+documentation site published on [ReadMe](https://readme.com/) (previously known as "ReadMe.io") 
+to a local repository of Markdown content files.
 
 Main features:
  - Fetch an existing documentation site from ReadMe using the API as a catalog of local Markdown content files
@@ -9,6 +10,7 @@ Main features:
  - Optionally clean up stale ReadMe pages (pages which do not have a corresponding Markdown content file) on push
  - Perform sanity checks on the local Markdown catalog, such as finding broken links
  - Convert ReadMe-proprietary widgets (such as images, tables, callouts, etc.) to a more generic Markdown equivalent
+    - Optionally, download images hosted on ReadMe to the local repository and modify references
  - Host locally specified static files (images and other documentation related files) on GitHub pages and refer to them on the ReadMe pages (see the `hostedFiles` filter described below)
  - Add custom dynamic footer to pages. Footers are specified as [Mustache](http://mustache.github.io/) templates.
 
@@ -51,7 +53,7 @@ The following YAML attributes are supported:
 | `excerpt`          | The small summary that appears under the page title in ReadMe.                                     |
 | `hidden`           | (Optional) If set to `true`, then the page will be hidden / un-published in the ReadMe navigation. |
 | `next`             | (Optional) Allows control on the *What's Next* entries displayed by ReadMe.                        |
-| `next.pages`       | (Optional) List of page slugs that should be referenced in the *What's Next* section.              |
+| `next.pages`       | (Optional) List of page slugs (strings) that should be referenced in the *What's Next* section.    |
 | `next.description` | (Optional) Text to be displayed as introduction in the *What's Next* section.                      |
 
 ## Using the `readme-sync` CLI in your project
@@ -62,9 +64,19 @@ To install the CLI in your project, run:
 
     $ npm install readme-sync --save-dev
     
-You can also install the CLI globally:
+You can also install the CLI globally (which would be preferred for usability):
 
     $ npm install -g readme-sync
+    
+> **NOTE**
+>
+> If you install the CLI locally to your project (instead of globally), you'll need to run it with `npx`:
+>
+>     $ npx readme-sync [command] [options]
+>     
+> When you install it globally (`-g` npm option), you can run it directly:
+> 
+>     $ readme-sync [command] [options]
     
 ### API key
 
@@ -104,12 +116,12 @@ The following fields can be provided in the YAML configuration file:
 
 Content filters are transformations that can be applied to content pages before they are pushed to ReadMe. To ensure local
 content stays unchanged when that content gets fetched back from ReadMe, all filters must be able to rollback their 
-changes.
+changes on the way back.
 
 #### `hostedFiles` filter
 
 This filter is to be used when content files are hosted on a publicly-accessible Web server. 
-All paths specified as relative paths will be converted to an equivalent public URL based on the filter's `baseUrl` configuration value. 
+All links specified as relative paths in the content pages will be converted to an equivalent public URL based on the filter's `baseUrl` configuration value. 
 Paths are assumed to be specified as relative to the page in which the files are referenced.
 
 **Configuration attributes**:
@@ -133,11 +145,11 @@ Renders a Mustache template as the footer of all content files.
 
 The Mustache template is rendered with a [view]() object that includes the following attributes:
 
-| Attribute | Description                                                                               |
-| ---       | ---                                                                                       |
-| `page`    | The page object being rendered. See the `Page` class for details of available attributes. |
+| Attribute                          | Description                                                                                                                          |
+| ---                                | ---                                                                                                                                  |
+| `page`                             | The page object being rendered. See the `Page` class for details of available attributes.                                            |
+| Any filter configuration attribute | All of the filter's configuration attributes specified in `config.yml` are also passed to the template so they can be used directly. |
 
-Additionally, all of the filter's configuration attributes are passed to the template so they can be used directly.
 
 **Configuration attributes**:
 
@@ -165,7 +177,6 @@ The following footer would be rendered on each content page:
 ```html
 <span id="footer">Hello there!</span>
 ```
-
 
 ### Get help
 
