@@ -272,3 +272,9 @@ To run tests, run
     $ npm test
     
 You should now be able to work on the project locally!
+
+### Releasing a new version
+
+GitHub Actions are used to publish the package to NPM for release. The
+workflow is appropriately named `Publish to NPM` and is executed 
+automatically whenever a GitHub _Release_ is created.  
