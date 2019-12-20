@@ -22,13 +22,17 @@ const CONFIG_APIKEY = 'apikey';
 const CONFIG_DOCSVERSION = 'docsversion';
 
 program.description(
-    `Tools to sync content back and forth between this local Git repository and the remote ReadMe API.
-Global arguments \`apikey\` and \`docsversion\` must always be provided for each command, before the command name.
+    `
+Tools to sync content back and forth between a local Git repository and a remote ReadMe-published documentation site.
+    
+Global options \`apikey\` and \`docsversion\` must always be provided for each command. They can be provided in the following ways:
+  - Directly in the command line as --apikey and --docsversion global options (they should appear before the command name)
+  - As environment variables (APIKEY or DOCSVERSION). Dotenv is supported (environment variables in .env file). 
 `);
 
 program.option(
     `-k, --${CONFIG_APIKEY} <${CONFIG_APIKEY}>`,
-    `API key for ReadMe (required)`,
+    `Your API key for ReadMe (required)`,
         key => process.env.APIKEY = key);
 program.option(`-v, --${CONFIG_DOCSVERSION} <${CONFIG_DOCSVERSION}>`,
     `Documentation version to act upon (required)`,
@@ -40,7 +44,7 @@ program.option(`-c, --config [config]`,
 program
     .command('fetch [category_slugs]')
     .description(`
-Fetches up-to-date Markdown content files from ReadMe, overwriting local files.
+Fetches up-to-date Markdown content files from ReadMe, overwriting local files with the content fetched.
 When called with a comma-delimited list of category slugs, only pages from those categories will be fetched.
 
 After crawling remote pages, the contents of the local catalog will be analyzed to find stale pages (pages present
@@ -56,7 +60,7 @@ locally but not present on Readme). If any are found, the program will offer to 
 
         const modifiedContentFiles = (await stagedGitFiles())
             .map(details => details.filename)
-            .filter(file => file.startsWith(cmd.dir));
+            .filter(file => file.startsWith(options.dir));
 
         if (modifiedContentFiles.length > 0) {
             console.log(chalk.yellow(modifiedContentFiles.join('\n')));
@@ -66,12 +70,12 @@ locally but not present on Readme). If any are found, the program will offer to 
         }
 
         // build the catalog from local content files
-        let catalog = Catalog.build(cmd.dir);
+        let catalog = Catalog.build(options.dir);
         catalog = await selectPages(catalog, options);
 
         const readme = apiClient(catalog, options);
 
-        let fetchedPages = await readme.fetchPages(listCategories(slug, options.config), async page => {
+        let fetchedPages = await readme.fetchPages(listCategories(options.categories, options.config), async page => {
             for (const filter of createFilters(options.config)) {
                 page = await filter.rollback(page);
             }
@@ -91,15 +95,17 @@ locally but not present on Readme). If any are found, the program will offer to 
             staleLocalPages.forEach(page => console.log(chalk.yellow(` - ${page.ref}`)));
 
             if (readlineSync.keyInYN(chalk.yellow(`They might have been deleted or moved. Do you want to prune these pages?`))) {
-                catalog.deletePages(cmd.dir, staleLocalPages);
+                catalog.deletePages(options.dir, staleLocalPages);
             }
         }
     });
 
 program
     .command('push [category_slugs]', )
-    .description('Pushes local Markdown content files to ReadMe. ' +
-        'When called with a comma-delimited list of category slugs, only those categories will be pushed.')
+    .description(`
+Updates pages published on ReadMe using the local Markdown content files. 
+When called with a comma-delimited list of category slugs, only those categories will be pushed.
+`)
     .option('-d, --dir <dir>', `Directory where the Markdown content files will be loaded from.`, DEFAULT_DOCS_DIR)
     .option('-f, --file <file>', `Path to a single file to process, relative to the directory specified with -d/--dir option.`)
     .option('--staged-only', `Only push files staged files that have been modified. Important: files must have been added to the index with 'git add'`)
@@ -116,7 +122,7 @@ program
             prune: cmd.prune,
         };
 
-        const fullCatalog = Catalog.build(cmd.dir);
+        const fullCatalog = Catalog.build(options.dir);
         const readme = apiClient(fullCatalog, options);
 
         const catalog = await selectPages(fullCatalog, options);
@@ -150,7 +156,9 @@ program
 
 program
     .command('markdownize [category_slugs]', )
-    .description('Converts proprietary Readme widgets to standard Markdown.')
+    .description(`
+Converts proprietary Readme widgets to standard Markdown.
+`)
     .option('-d, --dir <dir>', `Directory where the Markdown content files will be loaded from.`, DEFAULT_DOCS_DIR)
     .option('-f, --file <file>', `Path to a single file to process, relative to the directory specified with -d/--dir option.`)
     .option('-w, --widgets <widgets>', `Comma-separated list of Readme widgets to replace to Markdown. Supported widgets: 'code', 'callout', 'image', 'html'`)
@@ -171,7 +179,7 @@ program
             downloadFrom: cmd.downloadFrom,
         };
 
-        let catalog = Catalog.build(cmd.dir);
+        let catalog = Catalog.build(options.dir);
         catalog = await selectPages(catalog, options);
         if (catalog.length === 0) {
             console.warn('No files to found to markdownize.');
@@ -184,7 +192,7 @@ program
                 if (page.content !== updated) {
                     page.content = updated;
                     console.log(chalk.green(`Writing updated Markdown to [${page.path}]`));
-                    page.writeTo(cmd.dir);
+                    page.writeTo(options.dir);
                 }
             }
         }
@@ -192,7 +200,8 @@ program
 
 program
     .command('validate [category_slugs]', )
-    .description(`Validates Markdown content files.
+    .description(`
+Validates Markdown content files.
 
 The following validators are available:
 
@@ -204,7 +213,7 @@ The following validators are available:
  - 'whatsnext':    Verifies that pages references listed in 'next' front matter point to known content pages.
 
 All validations are performed unless --validations is specified.
-    `)
+`)
     .option('-d, --dir <dir>', `Directory where the Markdown content files will be loaded from.`, DEFAULT_DOCS_DIR)
     .option('-f, --file <file>', `Path to a single file to process, relative to the directory specified with -d/--dir option.`)
     .option('--validators <validators>', `Comma-delimited list of validators to run. See command help for supported validators.`)
@@ -218,8 +227,10 @@ All validations are performed unless --validations is specified.
             categories: slug,
             stagedOnly: cmd.stagedOnly,
             validators: cmd.validators,
+            fail: cmd.fail,
         };
-        let entireCatalog = Catalog.build(cmd.dir);
+
+        let entireCatalog = Catalog.build(options.dir);
 
         let pages = (await selectPages(entireCatalog, options)).pages;
         if (pages.length === 0) {
@@ -246,9 +257,9 @@ All validations are performed unless --validations is specified.
         // Wait until all validations are completed, then output stats and optionally exit with error code
         Promise.all(promises).then(() => {
             if (errorCount > 0) {
-                let color = cmd.fail ? chalk.red : chalk.yellow;
+                let color = options.fail ? chalk.red : chalk.yellow;
                 console.log(color(`${errorCount} validation errors were found in catalog.`));
-                if (cmd.fail) {
+                if (options.fail) {
                     process.exitCode = 1;
                 }
             } else {
@@ -316,7 +327,7 @@ function loadConfigYaml() {
     try {
         return yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
     } catch (e) {
-        console.log(e);
+        console.error(e);
         process.exit(1);
     }
 }
