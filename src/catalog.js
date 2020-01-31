@@ -28,10 +28,24 @@ class Catalog {
         return this.pages.find(filter);
     }
 
-    static build(dir) {
-        const contentFiles = glob.sync(path.join(dir, '**/*.md'));
-        const pages = contentFiles.map(file => Page.readFrom(file, dir));
 
+    static build(dir) {
+        var isWin = process.platform === "win32";
+
+        let contentFiles = glob.sync(path.join(dir, '**/*.md'));
+        if(isWin){
+          let winPaths = [];
+          for(let pathName of contentFiles){
+          pathName = pathName.replace(/\//g, '\\');
+          //console.log(pathName);
+          winPaths.push(pathName);
+        }
+        contentFiles = winPaths;
+      }
+        //console.log(contentFiles)
+        //console.log(isWin);
+        console.log(dir);
+        const pages = contentFiles.map(file => Page.readFrom(file, dir));
         return new Catalog(pages);
     }
 
@@ -242,7 +256,6 @@ class Page {
         const category = dirs[0];
         let parent;
         if (dirs.length > 1) parent = dirs[1];
-
         const sources = fs.readFileSync(file, 'utf8');
         return Page.create({category, parent, slug: name, sources});
     }

@@ -24,10 +24,10 @@ const CONFIG_DOCSVERSION = 'docsversion';
 program.description(
     `
 Tools to sync content back and forth between a local Git repository and a remote ReadMe-published documentation site.
-    
+
 Global options \`apikey\` and \`docsversion\` must always be provided for each command. They can be provided in the following ways:
   - Directly in the command line as --apikey and --docsversion global options (they should appear before the command name)
-  - As environment variables (APIKEY or DOCSVERSION). Dotenv is supported (environment variables in .env file). 
+  - As environment variables (APIKEY or DOCSVERSION). Dotenv is supported (environment variables in .env file).
 `);
 
 program.option(
@@ -103,7 +103,7 @@ locally but not present on Readme). If any are found, the program will offer to 
 program
     .command('push [category_slugs]', )
     .description(`
-Updates pages published on ReadMe using the local Markdown content files. 
+Updates pages published on ReadMe using the local Markdown content files.
 When called with a comma-delimited list of category slugs, only those categories will be pushed.
 `)
     .option('-d, --dir <dir>', `Directory where the Markdown content files will be loaded from.`, DEFAULT_DOCS_DIR)
@@ -124,7 +124,6 @@ When called with a comma-delimited list of category slugs, only those categories
 
         const fullCatalog = Catalog.build(options.dir);
         const readme = apiClient(fullCatalog, options);
-
         const catalog = await selectPages(fullCatalog, options);
         if (catalog.length === 0) {
             console.warn('No files to found to push.');
@@ -285,9 +284,19 @@ async function selectPages(catalog, options) {
     }
 
     if (options.stagedOnly) {
+        var isWin = process.platform === "win32";
         const stagedFiles = await stagedGitFiles();
-        const stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
 
+        let stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
+
+        if(isWin){
+          let winPaths = [];
+          for(let pathName of stagedFilePaths){
+          pathName = pathName.replace(/\//g, '\\');
+          winPaths.push(pathName);
+        }
+        stagedFilePaths = winPaths;
+      }
         filters.push(page => stagedFilePaths.includes(path.join(options.dir, page.path)));
     }
 
