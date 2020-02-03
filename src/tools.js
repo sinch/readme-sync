@@ -13,6 +13,25 @@ function flatten (ary) {
     return ret;
 }
 
+/**
+* Replace all forward slashes with back slashes if the platform used is win32.
+* @param pathsArr array with paths containing forward slashes.
+* @returns array containing forwards slashes.
+*/
+
+function pathConverter(pathsArr){
+  let isWin = process.platform === "win32";
+  var newPaths = [];
+  isWin = true;
+  if(isWin){
+    for(let path of pathsArr){
+      newPaths.push(path.replace(/\//g, '\\'));
+    }
+  }
+  console.log(newPaths);
+  return newPaths;
+}
+
 
 async function fileExists(path) {
     return new Promise((resolve, reject) => {
@@ -60,3 +79,4 @@ async function asyncStringReplace(str, regex, replacementFn) {
 module.exports.flatten = flatten;
 module.exports.fileExists = fileExists;
 module.exports.asyncStringReplace = asyncStringReplace;
+module.exports.pathConverter = pathConverter;

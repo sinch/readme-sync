@@ -6,6 +6,7 @@ const frontMatter = require('gray-matter');
 const marked = require('marked');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
+const tools =  require('./tools')
 
 class Catalog {
     constructor(pages) {
@@ -30,21 +31,18 @@ class Catalog {
 
 
     static build(dir) {
-        var isWin = process.platform === "win32";
-
         let contentFiles = glob.sync(path.join(dir, '**/*.md'));
+
+        let isWin = process.platform === "win32";
+        var newPaths = [];
+        console.log(contentFiles);
         if(isWin){
-          let winPaths = [];
-          for(let pathName of contentFiles){
-          pathName = pathName.replace(/\//g, '\\');
-          //console.log(pathName);
-          winPaths.push(pathName);
+          for(let path of contentFiles){
+            newPaths.push(path.replace(/\//g, '\\'));
+          }
+        contentFiles = newPaths;
         }
-        contentFiles = winPaths;
-      }
-        //console.log(contentFiles)
-        //console.log(isWin);
-        console.log(dir);
+        console.log(contentFiles);
         const pages = contentFiles.map(file => Page.readFrom(file, dir));
         return new Catalog(pages);
     }
