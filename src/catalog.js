@@ -33,16 +33,7 @@ class Catalog {
     static build(dir) {
         let contentFiles = glob.sync(path.join(dir, '**/*.md'));
 
-        let isWin = process.platform === "win32";
-        var newPaths = [];
-        console.log(contentFiles);
-        if(isWin){
-          for(let path of contentFiles){
-            newPaths.push(path.replace(/\//g, '\\'));
-          }
-        contentFiles = newPaths;
-        }
-        console.log(contentFiles);
+        contentFiles = tools.platformPathsConverter(contentFiles);
         const pages = contentFiles.map(file => Page.readFrom(file, dir));
         return new Catalog(pages);
     }
