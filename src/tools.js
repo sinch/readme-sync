@@ -28,7 +28,6 @@ function platformPathsConverter(pathsArr){
       newPaths.push(path.replace(/\//g, '\\'));
     }
   }
-  console.log(newPaths);
   return (newPaths.length === 0) ? pathsArr : newPaths;
 }
 
