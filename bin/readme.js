@@ -15,6 +15,7 @@ const { Api } = require('../src/api-client');
 const markdownize = require('../src/markdownize');
 const availableValidators = require('../src/validators');
 const availableFilters = require('../src/filters');
+const tools = require('../src/tools'); 
 
 const DEFAULT_CONFIG_FILE = 'config.yml';
 const DEFAULT_DOCS_DIR = 'docs';
@@ -286,8 +287,8 @@ async function selectPages(catalog, options) {
 
     if (options.stagedOnly) {
         const stagedFiles = await stagedGitFiles();
-        const stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
-
+        let stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
+        stagedFilePaths = tools.platformPathsConverter(stagedFilePaths);
         filters.push(page => stagedFilePaths.includes(path.join(options.dir, page.path)));
     }
 
