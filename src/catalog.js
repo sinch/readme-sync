@@ -6,7 +6,7 @@ const frontMatter = require('gray-matter');
 const marked = require('marked');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
-const tools = require('tools');
+const tools = require('./tools');
 
 class Catalog {
     constructor(pages) {
@@ -30,7 +30,7 @@ class Catalog {
     }
 
     static build(dir) {
-        const contentFiles = glob.sync(path.join(dir, '**/*.md'));
+        let contentFiles = glob.sync(path.join(dir, '**/*.md'));
         contentFiles = tools.platformPathsConverter(contentFiles);
         const pages = contentFiles.map(file => Page.readFrom(file, dir));
         return new Catalog(pages);

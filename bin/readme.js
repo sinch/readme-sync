@@ -287,8 +287,8 @@ async function selectPages(catalog, options) {
 
     if (options.stagedOnly) {
         const stagedFiles = await stagedGitFiles();
-        const stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
-        stagedFilePaths = tools.platformPathsConverter(stagedfFilePaths);
+        let stagedFilePaths = stagedFiles.map(stagedFile => stagedFile.filename);
+        stagedFilePaths = tools.platformPathsConverter(stagedFilePaths);
         filters.push(page => stagedFilePaths.includes(path.join(options.dir, page.path)));
     }
 
