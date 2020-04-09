@@ -106,8 +106,8 @@ class HrefValidator extends ElementValidator {
     async resolveLocal(link, catalog, options) {
         const page = link.page;
      
-        const filePath = link.href.split('?')[0];  // relative paths can include '?' as query strings, only keep path
-       
+        var filePath = link.href.split('?')[0];  // relative paths can include '?' as query strings, only keep path
+        filePath = filePath.replace(/\\/g, "/");
         const fileLocation = path.normalize(path.resolve(options.dir, path.normalize(page.directory), path.normalize(filePath)));
         //const fileLocation =  path.normalize(filePath)
         return fileExists(fileLocation)
