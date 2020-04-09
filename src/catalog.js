@@ -31,7 +31,9 @@ class Catalog {
 
     static build(dir) {
         let contentFiles = glob.sync(path.join(dir, '**/*.md'));
-        contentFiles = tools.platformPathsConverter(contentFiles);
+
+        //contentFiles = tools.platformPathsConverter(contentFiles);
+
         const pages = contentFiles.map(file => Page.readFrom(file, dir));
         return new Catalog(pages);
     }
@@ -237,11 +239,13 @@ class Page {
     }
 
     static readFrom(file, baseDir) {
+        file = path.normalize(file)
         const { dir, name } = path.parse(file);
         const baseDirs = baseDir.split(path.sep);
         const dirs = dir.split(path.sep).filter(part => !baseDirs.includes(part));
         const category = dirs[0];
         let parent;
+
         if (dirs.length > 1) parent = dirs[1];
 
         const sources = fs.readFileSync(file, 'utf8');

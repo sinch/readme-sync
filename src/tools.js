@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const path = require('path');
 
 function flatten (ary) {
     var ret = [];
@@ -24,8 +24,9 @@ function platformPathsConverter(pathsArr){
     var newPaths = [];
     isWin = true;
     if(isWin){
-      for(const path of pathsArr){
-        newPaths.push(path.replace(/\//g, '\\'));
+      for(const p of pathsArr){
+       // newPaths.push(path.replace(/\//g, '\\'));
+       newPaths.push(path.normalize(p))
       }
     }
     return (newPaths.length === 0) ? pathsArr : newPaths;
