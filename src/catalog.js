@@ -347,7 +347,9 @@ class Link extends Element {
     get position() {
         return this.positionIndex;
     }
-
+    get markdown() {
+        return this.text;
+    }
     isRemote() {
         return /(https?:)?\/\/.*/.test(this.href);
     }
