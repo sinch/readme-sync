@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/%40sinch%2Freadme-sync.svg)](https://badge.fury.io/js/%40sinch%2Freadme-sync)
+
 # Publish local Markdown content files to ReadMe
 
 This is a CLI application that allows to offload the editing workflow of a 
@@ -62,11 +64,11 @@ The following YAML attributes are supported:
 
 To install the CLI in your project, run:
 
-    $ npm install readme-sync --save-dev
+    $ npm install @sinch/readme-sync --save-dev
     
 You can also install the CLI globally (which would be preferred for usability):
 
-    $ npm install -g readme-sync
+    $ npm install -g @sinch/readme-sync
     
 > **NOTE**
 >
