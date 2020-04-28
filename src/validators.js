@@ -59,7 +59,7 @@ class XrefLinkValidator extends ElementValidator {
             }
 
             if (anchor !== undefined) {
-                console.log("check anchos")
+
                 target = page.findElement(Heading.bySlug(anchor));
             }
 
