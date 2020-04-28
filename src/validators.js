@@ -50,7 +50,7 @@ class XrefLinkValidator extends ElementValidator {
             }
 
             const page = slug ? catalog.find(Page.bySlug(slug)) : link.page;
-
+            
             let target = page;
 
             if (target === undefined) {
@@ -59,11 +59,12 @@ class XrefLinkValidator extends ElementValidator {
             }
 
             if (anchor !== undefined) {
+                console.log("check anchos")
                 target = page.findElement(Heading.bySlug(anchor));
             }
 
             if (target === undefined) {
-                let suggestion = `section-${anchor}`;
+                let suggestion = `${anchor}`;
                 if (page.findElement(Heading.bySlug(suggestion))) {
                     reject(`Section '${anchor}' wasn't found but a section with a similar slug was found. Did you mean '#${suggestion}'?`);
                 } else {

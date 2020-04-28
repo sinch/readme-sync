@@ -280,6 +280,7 @@ function apiClient(catalog, options) {
 async function selectPages(catalog, options) {
     const filters = [];
     if (options.file) {
+        console.log(Page.byPath(options.file));
         filters.push(Page.byPath(options.file));
     } else {
         filters.push(Page.inCategories(listCategories(options.categories, options.config)));
@@ -300,7 +301,7 @@ function selectValidators(options) {
     const validatorNames = Object.keys(availableValidators);
     let selectedValidators = validatorNames;
     if (options.validators) {
-        selectedValidators = cmd.validators.split(',');
+        selectedValidators = options.validators.split(',');
     }
 
     return selectedValidators.map(name => {

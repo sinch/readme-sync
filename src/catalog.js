@@ -302,7 +302,7 @@ class Heading extends Element {
             .replace('/', ' ')
             .replace('\(', '')
             .replace('\)', '-');
-        return 'section-' + slugify(base).toLowerCase();
+        return slugify(base).toLowerCase();
     }
 
     get desc() {
