@@ -1,9 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const { URL } = require('url');
+const path = require("path");
+const fs = require("fs");
+const { URL } = require("url");
 
-const { UrlLink } = require('./catalog');
-
+const { UrlLink } = require("./catalog");
 
 /**
  * Content Filters allow a different representation of content on Readme.io than in local `.md` files. Filters will
@@ -17,17 +16,17 @@ const { UrlLink } = require('./catalog');
  * implemented should not only implement the filtering itself, but also a way to roll it back.
  */
 class Filter {
-    constructor(config) {
-        this.config = config;
-    }
+  constructor(config) {
+    this.config = config;
+  }
 
-    async apply(page) {
-        throw new Error("Not implemented");
-    }
+  async apply(page) {
+    throw new Error("Not implemented");
+  }
 
-    async rollback(page) {
-        throw new Error("Not implemented");
-    }
+  async rollback(page) {
+    throw new Error("Not implemented");
+  }
 }
 
 /**
@@ -40,39 +39,44 @@ class Filter {
  * server.
  */
 class HostedFilesFilter extends Filter {
+  apply(page) {
+    const replacements = [];
 
-    apply(page) {
-        const replacements = [];
+    for (const link of page.links.filter(
+      (link) => link instanceof UrlLink && link.isLocal()
+    )) {
+      const localFilePath = path.join(page.directory, link.href);
+      const hostingUrl = new URL(localFilePath, this.config.baseUrl);
 
-        for (const link of page.links.filter(link => link instanceof UrlLink && link.isLocal())) {
-            const localFilePath = path.join(page.directory, link.href);
-            const hostingUrl = new URL(localFilePath, this.config.baseUrl);
-
-            replacements.push([link, link.copy({href: hostingUrl.toString()})]);
-        }
-        return Promise.resolve(page.replaceElements(replacements));
+      replacements.push([link, link.copy({ href: hostingUrl.toString() })]);
     }
+    return Promise.resolve(page.replaceElements(replacements));
+  }
 
-    rollback(page) {
-        const replacements = [];
+  rollback(page) {
+    const replacements = [];
 
-        for (const link of page.links.filter(link => link instanceof UrlLink && link.isRemote())) {
-            if (link.href.startsWith(this.config.baseUrl)) {
-                const localFilePath = decodeURI(link.href.substr(this.config.baseUrl.length));
-                const relativePath = path.relative(page.directory, localFilePath);
+    for (const link of page.links.filter(
+      (link) => link instanceof UrlLink && link.isRemote()
+    )) {
+      if (link.href.startsWith(this.config.baseUrl)) {
+        const localFilePath = decodeURI(
+          link.href.substr(this.config.baseUrl.length)
+        );
+        const relativePath = path.relative(page.directory, localFilePath);
 
-                replacements.push([link, link.copy({href: relativePath})]);
-            }
-        }
-        return Promise.resolve(page.replaceElements(replacements));
+        replacements.push([link, link.copy({ href: relativePath })]);
+      }
     }
+    return Promise.resolve(page.replaceElements(replacements));
+  }
 }
 
 /**
  *
  * todo: individual filters should be put in separate source files.
  */
-const Mustache = require('mustache');
+const Mustache = require("mustache");
 const { asyncStringReplace } = require("./tools");
 
 /**
@@ -80,20 +84,22 @@ const { asyncStringReplace } = require("./tools");
  * Stub Markdown "comments" are used to delimit content as described here: https://stackoverflow.com/questions/4823468/comments-in-markdown
  */
 class ContentMarker {
-    constructor(name) {
-        this.name = name;
-        this.regex = new RegExp(`\\n\\[${name}\\]: #((.|[\\r\\n])*)\\[\\/${name}\\]: #`, 'gm');
-    }
+  constructor(name) {
+    this.name = name;
+    this.regex = new RegExp(
+      `\\n\\[/${name}\\]: #((.|[\\r\\n])*)\\[\\/${name}\\]: #`,
+      "gm"
+    );
+  }
 
-    wrap(content) {
-        return `\n[${this.name}]: #\n${content}\n\n[/${this.name}]: #`;
-    }
+  wrap(content) {
+    return `\n[/${this.name}]: #\n${content}\n\n[/${this.name}]: #`;
+  }
 
-    async replaceAll(content, replacementFn) {
-        return await asyncStringReplace(content, this.regex, replacementFn);
-    }
+  async replaceAll(content, replacementFn) {
+    return await asyncStringReplace(content, this.regex, replacementFn);
+  }
 }
-
 
 /**
  * Renders a Mustache template as the footer of all content files.
@@ -106,35 +112,34 @@ class ContentMarker {
  * directly.
  */
 class FooterFilter extends Filter {
-    constructor(config) {
-        super(config);
-        this.marker = new ContentMarker('footer');
-    }
+  constructor(config) {
+    super(config);
+    this.marker = new ContentMarker("footer");
+  }
 
-    apply(page) {
-        const view = {
-            page,
-            ...this.config,
-        };
+  apply(page) {
+    const view = {
+      page,
+      ...this.config,
+    };
 
-        return new Promise((resolve, reject) => {
-            fs.readFile(this.config.template, (err, data) => {
-                if (err) reject(err);
+    return new Promise((resolve, reject) => {
+      fs.readFile(this.config.template, (err, data) => {
+        if (err) reject(err);
 
-                const rendered = Mustache.render(data.toString(), view);
-                resolve(page.edit(page.content + this.marker.wrap(rendered)));
-            });
-        });
-    }
+        const rendered = Mustache.render(data.toString(), view);
+        resolve(page.edit(page.content + this.marker.wrap(rendered)));
+      });
+    });
+  }
 
-    async rollback(page) {
-        const newContent = await this.marker.replaceAll(page.content, () => '');
-        return page.edit(newContent);
-    }
+  async rollback(page) {
+    const newContent = await this.marker.replaceAll(page.content, () => "");
+    return page.edit(newContent);
+  }
 }
 
-
 module.exports = {
-    hostedFiles: HostedFilesFilter,
-    footer: FooterFilter,
+  hostedFiles: HostedFilesFilter,
+  footer: FooterFilter,
 };
