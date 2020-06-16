@@ -139,7 +139,43 @@ class FooterFilter extends Filter {
   }
 }
 
+var markdownInclude = require("markdown-include");
+class IncludeFilter extends Filter {
+  apply(page) {
+    const replacements = [];
+    markdownInclude.findIncludeTags(page.content);
+    for (const link of page.links.filter(
+      (link) => link instanceof UrlLink && link.isLocal()
+    )) {
+      const localFilePath = path.join(page.directory, link.href);
+      const hostingUrl = new URL(localFilePath, this.config.baseUrl);
+
+      replacements.push([link, link.copy({ href: hostingUrl.toString() })]);
+    }
+    return Promise.resolve(page.replaceElements(replacements));
+  }
+
+  rollback(page) {
+    const replacements = [];
+
+    for (const link of page.links.filter(
+      (link) => link instanceof UrlLink && link.isRemote()
+    )) {
+      if (link.href.startsWith(this.config.baseUrl)) {
+        const localFilePath = decodeURI(
+          link.href.substr(this.config.baseUrl.length)
+        );
+        const relativePath = path.relative(page.directory, localFilePath);
+
+        replacements.push([link, link.copy({ href: relativePath })]);
+      }
+    }
+    return Promise.resolve(page.replaceElements(replacements));
+  }
+}
+
 module.exports = {
   hostedFiles: HostedFilesFilter,
   footer: FooterFilter,
+  includeFilter: IncludeFilter,
 };

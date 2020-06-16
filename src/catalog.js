@@ -128,6 +128,9 @@ class Page {
   get hidden() {
     return this.headers.hidden === undefined ? false : this.headers.hidden;
   }
+  set hidden(value) {
+    this.headers.hidden = value;
+  }
 
   findElement(filter) {
     return this.elements.find(filter);
@@ -152,9 +155,9 @@ class Page {
     // readme.io always strips the last newline from content, so do the same here to prevent unnecessary content
     // updates from hash differences.
     let content = this.content;
-    if (content.endsWith("\n")) {
-      content = content.substr(0, this.content.length - 1);
-    }
+    // if (content.endsWith("\n")) {
+    //   content = content.substr(0, this.content.length - 1);
+    // }
 
     return JSON.stringify({
       title: this.title,
