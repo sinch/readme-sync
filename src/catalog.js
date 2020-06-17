@@ -154,18 +154,20 @@ class Page {
   get hashData() {
     // readme.io always strips the last newline from content, so do the same here to prevent unnecessary content
     // updates from hash differences.
-    let content = this.content;
+    let content = this.content.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, "");
     // if (content.endsWith("\n")) {
     //   content = content.substr(0, this.content.length - 1);
     // }
 
-    return JSON.stringify({
-      title: this.title,
-      excerpt: this.excerpt,
+    var data = JSON.stringify({
+      title: this.title.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
+      excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
       hidden: this.hidden,
       next: this.headers.next,
       content: content,
     });
+
+    return data;
   }
 
   get sources() {
@@ -174,13 +176,14 @@ class Page {
       excerpt: this.excerpt,
     };
     if (this.hidden) {
-      frontMatter["hidden"] = "true";
+      frontMatter["hidden"] = true;
     }
     if (this.headers.next) {
       const next = (frontMatter["next"] = {});
       if (this.headers.next.pages) {
         next["pages"] = this.headers.next.pages;
       }
+      next["description"] = "";
       if (this.headers.next.description) {
         next["description"] = this.headers.next.description;
       }

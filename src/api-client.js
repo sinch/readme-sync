@@ -92,8 +92,10 @@ class Api {
     }
     try {
       const pageJson = await this.loadPage(localPage.slug);
-
+     
+     
       const remotePage = Api.jsonToPage(pageJson);
+     
       if (remotePage.hash === localPage.hash) {
         console.log(
           chalk.cyan(
@@ -128,7 +130,7 @@ class Api {
       });
       console.log(
         chalk.green(
-          `Updated contents of existing page [${localPage.ref}] on readme.io`
+          `Updated 2 contents of existing page [${localPage.ref}] on readme.io`
         )
       );
     }
