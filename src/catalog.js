@@ -166,7 +166,7 @@ class Page {
       next: this.headers.next,
       content: content,
     });
-    console.log("rawdata:" + data);
+
     return data;
   }
 
