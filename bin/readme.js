@@ -193,6 +193,7 @@ When called with a comma-delimited list of category slugs, only those categories
       for (const filter of createFilters(options.config)) {
         page = await filter.apply(page);
       }
+
       if (cmd.hidden) page.hidden = cmd.hidden;
       readme.pushPage(page);
     }

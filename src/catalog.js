@@ -129,7 +129,7 @@ class Page {
     return this.headers.hidden === undefined ? false : this.headers.hidden;
   }
   set hidden(value) {
-    this.headers.hidden = value;
+    this.headers.hidden = JSON.parse(value.toLowerCase());
   }
 
   findElement(filter) {
@@ -166,7 +166,7 @@ class Page {
       next: this.headers.next,
       content: content,
     });
-
+    console.log("rawdata:" + data);
     return data;
   }
 
