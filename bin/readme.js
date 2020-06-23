@@ -167,7 +167,7 @@ When called with a comma-delimited list of category slugs, only those categories
     "--dry-run",
     `No remote content will be updated but command output will show what would be done.`
   )
-  .option("--force", "skip comparison of pages and pushes all")
+  .option("--force", "Skip comparison of pages and pushes all")
   .option("-h, --hidden <true|false>", "Overrides the hidden darkmatter header")
   .action(async (slug, cmd) => {
     const options = {

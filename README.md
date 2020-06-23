@@ -193,6 +193,15 @@ You can get help for the CLI or for any command by running it with `-h` argument
 Pushes local Markdown content files to ReadMe via their public API. It is assumed that each `.md` file in the
 contents directory matches the slug of the page in ReadMe.
 
+| Options for push   | description                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| --force            | Skip comparison of pages and pushes all pages even if they are the same                     |
+| -h, --hidden <true | false>                                                                                      | Overrides the hidden header, good when working on new versions |
+| --prune            | When enabled, remote pages that do not exist locally will be pruned (deleted).              |
+| -d, --dir          | Directory where the Markdown content files will be loaded from. default to docs             |
+| -f, --file <file>  | Path to a single file to process, relative to the directory specified with -d/--dir option. |
+| --dry-run          | No remote content will be updated but command output will show what would be done.          |
+
 **Usage examples**
 
 Push contents for all categories defined in `config.yml`:
@@ -269,8 +278,8 @@ Then, make sure the right Node version is installed and in use:
     $ nvm use
 
 Finally, install project dependencies:
-  
- \$ npm install
+
+\$ npm install
 
 To run tests, run
 
