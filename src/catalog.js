@@ -6,7 +6,9 @@ const frontMatter = require("gray-matter");
 const marked = require("marked");
 const slugify = require("slugify");
 const yaml = require("js-yaml");
+const chalk = require("chalk");
 const tools = require("./tools");
+const { resolve } = require("path");
 
 class Catalog {
   constructor(pages) {
@@ -241,9 +243,18 @@ class Page {
   }
 
   static create({ category, parent, slug, sources }) {
-    const matter = frontMatter(sources);
+    var matter;
+
+    try {
+      matter = frontMatter(sources);
+    } catch(error){
+      console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      process.exit(1);
+    }
     return new Page(category, parent, slug, matter.content, matter.data);
   }
+
+  
 
   static readFrom(file, baseDir) {
     file = path.normalize(file);
