@@ -167,6 +167,7 @@ When called with a comma-delimited list of category slugs, only those categories
     "--dry-run",
     `No remote content will be updated but command output will show what would be done.`
   )
+  .option("--force", "skip comparison of pages and pushes all")
   .option("-h, --hidden <true|false>", "Overrides the hidden darkmatter header")
   .action(async (slug, cmd) => {
     const options = {
@@ -178,8 +179,9 @@ When called with a comma-delimited list of category slugs, only those categories
       dryRun: cmd.dryRun,
       prune: cmd.prune,
       hidden: cmd.hidden,
+      force: cmd.force,
     };
-
+    console.log("force:" + options.force);
     const fullCatalog = Catalog.build(options.dir);
     const readme = apiClient(fullCatalog, options);
 

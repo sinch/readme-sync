@@ -92,11 +92,10 @@ class Api {
     }
     try {
       const pageJson = await this.loadPage(localPage.slug);
-     
-     
+
       const remotePage = Api.jsonToPage(pageJson);
-     
-      if (remotePage.hash === localPage.hash) {
+
+      if (!this.options.force && remotePage.hash === localPage.hash) {
         console.log(
           chalk.cyan(
             `Contents of page [${localPage.slug}] was not pushed because contents are the same.`

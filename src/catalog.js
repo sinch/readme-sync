@@ -154,7 +154,9 @@ class Page {
   get hashData() {
     // readme.io always strips the last newline from content, so do the same here to prevent unnecessary content
     // updates from hash differences.
-    let content = this.content.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, "");
+    let tempcontent = this.content
+      .replace(/(\r\n|\n|\r)/gm, "")
+      .replace(/ /g, "");
     // if (content.endsWith("\n")) {
     //   content = content.substr(0, this.content.length - 1);
     // }
@@ -164,7 +166,7 @@ class Page {
       excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
       hidden: this.hidden,
       next: this.headers.next,
-      content: content,
+      content: tempcontent,
     });
 
     return data;
