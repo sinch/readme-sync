@@ -254,8 +254,6 @@ class Page {
     return new Page(category, parent, slug, matter.content, matter.data);
   }
 
-  
-
   static readFrom(file, baseDir) {
     file = path.normalize(file);
     const { dir, name } = path.parse(file);
