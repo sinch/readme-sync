@@ -244,7 +244,11 @@ class Page {
     try {
       matter = frontMatter(sources);
     } catch(error){
-      console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      if(parent === undefined){
+        console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      }else{
+        console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + parent + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      }
       process.exit(1);
     }
     return new Page(category, parent, slug, matter.content, matter.data);
