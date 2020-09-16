@@ -129,10 +129,7 @@ class HrefValidator extends ElementValidator {
       )
     );
     return fileExists(fileLocation).catch(() => {
-      console.log(options.dir);
-      console.log(page.directory);
-      console.log(filePath);
-      console.log(link.markdown);
+
       reject("Local file1: " + fileLocation + " does not exist.");
       return;
     });
@@ -142,19 +139,23 @@ class HrefValidator extends ElementValidator {
     const href = link.href;
 
     function checkError(err) {
-      console.log(link.page.hidden);
+
       if (err.statusCode == undefined) {
+
         throw "Link is invalid or domain doesnt exist:" + link.href;
       }
-      if (err.statusCode.startsWith("4")) {
+      if (err.statusCode != undefined && err.statusCode.toString().startsWith("403")) {
+        return;
+      }
+      if (err.statusCode != undefined && err.statusCode.toString().startsWith("4")) {
         throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
       }
-      if (err.statusCode.startsWith("5")) {
-        throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
+      if (err.statusCode.toString().startsWith("5")) {
+        throw link.href + ` Server error broken: HTTP Status ${err.statusCode}`;
       }
-      if (err.statusCode.startsWith("3")) {
-        throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
-      }
+      // if (err.statusCode.startsWith("3")) {
+      //   throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
+      // }
     }
 
     async function attemptFetch(httpOp) {
@@ -163,7 +164,7 @@ class HrefValidator extends ElementValidator {
           Accept: "*/*",
           "User-Agent": "curl/7.54.0", // some servers block requests from scripts, attempt cURL impersonation
         },
-        timeout: 5000, // ms
+        timeout: 7000, // ms
         followRedirect: true,
       });
     }
@@ -192,7 +193,7 @@ class HeadingsValidator extends Validator {
       errorCallback(
         heading,
         "Heading with level 1 are reserved for page titles. " +
-          "Use headings of level 2 and more in content files."
+        "Use headings of level 2 and more in content files."
       )
     );
   }
@@ -211,7 +212,7 @@ class WhatsNextValidator extends Validator {
           errorCallback(
             element,
             "Invalid page reference in `next.pages` front matter entry. " +
-              "A page with this slug could not be found in local catalog."
+            "A page with this slug could not be found in local catalog."
           );
         }
       }
