@@ -1,5 +1,6 @@
 const request = require("request-promise-native");
 const path = require("path");
+const chalk = require("chalk");
 const { fileExists } = require("./tools");
 const {
   Page,
@@ -141,17 +142,22 @@ class HrefValidator extends ElementValidator {
     function checkError(err) {
 
       if (err.statusCode == undefined) {
-
-        throw "Link is invalid or domain doesnt exist:" + link.href;
+        console.log(chalk.yellow(link.ref + 'Link is invalid or domain doesnt exist:' + link.href));
+        return;
       }
       if (err.statusCode != undefined && err.statusCode.toString().startsWith("403")) {
         return;
       }
       if (err.statusCode != undefined && err.statusCode.toString().startsWith("4")) {
-        throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
+        console.log(chalk.yellow(link.ref + ": (" + link.href + ')  seems broken: HTTP Status:' + err.statusCode));
+
+        return
+
       }
       if (err.statusCode.toString().startsWith("5")) {
-        throw link.href + ` Server error broken: HTTP Status ${err.statusCode}`;
+        console.log(chalk.yellow(link.ref + ": (" + link.href + ')  seems broken: HTTP Status:' + err.statusCode));
+        return
+
       }
       // if (err.statusCode.startsWith("3")) {
       //   throw link.href + ` URL seems broken: HTTP Status ${err.statusCode}`;
@@ -164,7 +170,7 @@ class HrefValidator extends ElementValidator {
           Accept: "*/*",
           "User-Agent": "curl/7.54.0", // some servers block requests from scripts, attempt cURL impersonation
         },
-        timeout: 7000, // ms
+        timeout: 10000, // ms
         followRedirect: true,
       });
     }
