@@ -303,7 +303,7 @@ class Heading extends Element {
   }
 
   get slug() {
-    const base = this.text.replace("/", " ").replace("(", "").replace(")", "");
+    const base = this.text.replace("/", " ").replace("(", "").replace(")", "").replace(".","");
     return slugify(base).toLowerCase();
   }
 
