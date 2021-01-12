@@ -191,7 +191,7 @@ class Page {
       }
     }
 
-    return `---\n${yaml.safeDump(frontMatter)}---\n${this.content}`;
+    return `---\n${yaml.safeDump(frontMatter, {skipInvalid: true})}---\n${this.content}`;
   }
 
   async writeTo(baseDir) {
@@ -203,6 +203,8 @@ class Page {
         if (err) reject(err);
         else resolve(outputFile);
       });
+    }).catch(err => {
+      console.error(err);
     });
   }
 
@@ -303,7 +305,7 @@ class Heading extends Element {
   }
 
   get slug() {
-    const base = this.text.replace("/", " ").replace("(", "").replace(")", "");
+    const base = this.text.replace("/", " ").replace("(", "").replace(")", "").replace(".","");
     return slugify(base).toLowerCase();
   }
 
