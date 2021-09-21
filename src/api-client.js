@@ -195,6 +195,7 @@ class Api {
     const headers = {
       title: json.title,
       excerpt: json.excerpt,
+      order: json.order,
       hidden: json.hidden,
       next: undefined,
     };
@@ -223,6 +224,7 @@ class Api {
     const json = {
       title: page.title,
       excerpt: page.excerpt,
+      order: page.order,
       hidden: page.hidden,
       body: page.content,
       next: {
