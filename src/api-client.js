@@ -120,18 +120,24 @@ class Api {
         )
       );
     } else {
-      await request.put(`${API_ROOT}/docs/${localPage.slug}`, {
-        ...this.httpOptions,
-        json: Object.assign(pageJson, {
-          ...this.pageToJson(localPage),
-          lastUpdatedHash: localPage.hash,
-        }),
-      });
-      console.log(
-        chalk.green(
-          `Updated 2 contents of existing page [${localPage.ref}] on readme.io`
-        )
-      );
+      try {
+        await request.put(`${API_ROOT}/docs/${localPage.slug}`, {
+          ...this.httpOptions,
+          json: Object.assign(pageJson, {
+            ...this.pageToJson(localPage),
+            lastUpdatedHash: localPage.hash,
+          }),
+        });
+        console.log(
+          chalk.green(
+            `Updated 2 contents of existing page [${localPage.ref}] on readme.io`
+          )
+        );
+      }
+      catch (error) {
+        console.log(error);
+        process.exit(1);
+      }
     }
   }
 
