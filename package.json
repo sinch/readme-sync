@@ -37,7 +37,7 @@
     "gray-matter": "^4.0.2",
     "js-yaml": "^3.13.1",
     "markdown-include": "^0.4.3",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "mustache": "^3.1.0",
     "readline-sync": "^1.4.10",
     "request": "^2.88.0",
