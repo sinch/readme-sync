@@ -163,13 +163,21 @@ class Page {
     //   content = content.substr(0, this.content.length - 1);
     // }
 
-    var data = JSON.stringify({
-      title: this.title.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
-      excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
-      hidden: this.hidden,
-      next: this.headers.next,
-      content: tempcontent,
-    });
+    let data;
+
+    try {
+      data = JSON.stringify({
+        title: this.title.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
+        excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
+        hidden: this.hidden,
+        next: this.headers.next,
+        content: tempcontent,
+      });
+    }
+    catch (ex) {
+      console.error(chalk.red(`There is an issue with the YAML header of ${this.slug}`));
+      process.exit(1);
+    }
 
     return data;
   }
