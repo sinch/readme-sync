@@ -120,24 +120,23 @@ class Api {
         )
       );
     } else {
-      try {
         await request.put(`${API_ROOT}/docs/${localPage.slug}`, {
           ...this.httpOptions,
           json: Object.assign(pageJson, {
             ...this.pageToJson(localPage),
             lastUpdatedHash: localPage.hash,
           }),
+        })
+        .catch((error) => {
+          console.log(error.message);
+          process.exit(1);
         });
+
         console.log(
           chalk.green(
             `Updated 2 contents of existing page [${localPage.ref}] on readme.io`
           )
         );
-      }
-      catch (error) {
-        console.log(error);
-        process.exit(1);
-      }
     }
   }
 
@@ -167,11 +166,16 @@ class Api {
         chalk.dim(`DRY RUN: Would create page [${localPage.ref}] on readme.io`)
       );
     } else {
-      await request.post(`${API_ROOT}/docs`, {
-        ...this.httpOptions,
-        json: postJson,
-      });
-      console.log(chalk.green(`Created page [${localPage.ref}] on readme.io`));
+        await request.post(`${API_ROOT}/docs`, {
+          ...this.httpOptions,
+          json: postJson,
+        })
+        .catch((error) => {
+          console.log(error.message);
+          process.exit(1);
+        });
+
+        console.log(chalk.green(`Created page [${localPage.ref}] on readme.io`));
     }
   }
 
