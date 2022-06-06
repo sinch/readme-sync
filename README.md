@@ -4,7 +4,9 @@
 
 This is a CLI application that allows to offload the editing workflow of a
 documentation site published on [ReadMe](https://readme.com/) (previously known as "ReadMe.io")
-to a local repository of Markdown content files.
+to a local repository of Markdown content files. 
+
+> Note: As of June 2021, this application is no longer maintained.
 
 Main features:
 
