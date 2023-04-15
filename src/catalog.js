@@ -6,7 +6,9 @@ const frontMatter = require("gray-matter");
 const marked = require("marked");
 const slugify = require("slugify");
 const yaml = require("js-yaml");
+const chalk = require("chalk");
 const tools = require("./tools");
+const { resolve } = require("path");
 
 class Catalog {
   constructor(pages) {
@@ -161,13 +163,21 @@ class Page {
     //   content = content.substr(0, this.content.length - 1);
     // }
 
-    var data = JSON.stringify({
-      title: this.title.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
-      excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
-      hidden: this.hidden,
-      next: this.headers.next,
-      content: tempcontent,
-    });
+    let data;
+
+    try {
+      data = JSON.stringify({
+        title: this.title.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
+        excerpt: this.excerpt.replace(/(\r\n|\n|\r)/gm, "").replace(/ /g, ""),
+        hidden: this.hidden,
+        next: this.headers.next,
+        content: tempcontent,
+      });
+    }
+    catch (ex) {
+      console.error(chalk.red(`There is an issue with the YAML header of ${this.slug}`));
+      process.exit(1);
+    }
 
     return data;
   }
@@ -241,7 +251,18 @@ class Page {
   }
 
   static create({ category, parent, slug, sources }) {
-    const matter = frontMatter(sources);
+    var matter;
+
+    try {
+      matter = frontMatter(sources);
+    } catch(error){
+      if(parent === undefined){
+        console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      }else{
+        console.error(error.name + ": Check the YAML formatting of the file: " + chalk.cyan(category + "/" + parent + "/" + slug + ":" + error.mark.line) + ", by using a linter.");
+      }
+      process.exit(1);
+    }
     return new Page(category, parent, slug, matter.content, matter.data);
   }
 

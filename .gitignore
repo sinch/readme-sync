@@ -6,3 +6,6 @@ node_modules
 *.iml
 *.iws
 .idea
+
+sinch-readme-sync-*.tgz
+.vscode
